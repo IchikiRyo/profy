@@ -10,6 +10,8 @@ class User < ActiveRecord::Base
   validates_attachment_content_type :avatar, content_type: ["image/jpg","image/jpeg","image/png"]
   #association
   belongs_to :group
+  has_many :questions, ->{ order("created_at DESC") }
+  has_many :answers, ->{ order("updated_at DESC") }
 
   #validation
   before_validation :group_key_to_id, if: :has_group_key?
@@ -36,6 +38,10 @@ class User < ActiveRecord::Base
 
   def name_kana
     "#{family_name_kana} #{first_name_kana}"
+  end
+
+  def full_profile?
+    avatar? && family_name? && first_name? && family_name_kana? && first_name_kana?
   end
 
   private
